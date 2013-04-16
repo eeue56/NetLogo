@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
 class TestEngineType extends FunSuite {
 
   test("engine name") {
-    assert(Rhino.engine.getFactory.getEngineName === "Mozilla Rhino")
+    assert(Rhino.engine.getFactory.getEngineName === "Oracle Nashorn")
   }
 
 }
