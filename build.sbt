@@ -5,7 +5,7 @@
 scalaVersion in ThisBuild := "2.10.1"
 
 scalacOptions in ThisBuild ++=
-  "-deprecation -unchecked -feature -Xcheckinit -encoding us-ascii -target:jvm-1.6 -optimize -Xfatal-warnings -Ywarn-adapted-args -Yinline-warnings"
+  "-deprecation -unchecked -feature -Xcheckinit -encoding us-ascii -target:jvm-1.6 -optimize -Xlint -Xfatal-warnings"
   .split(" ").toSeq
 
 javacOptions in ThisBuild ++=
@@ -15,19 +15,16 @@ javacOptions in ThisBuild ++=
 // only log problems plz
 ivyLoggingLevel in ThisBuild := UpdateLogging.Quiet
 
-// this makes jar-building and script-writing easier
+// this makes script-writing easier
 retrieveManaged in ThisBuild := true
 
 // we're not cross-building for different Scala versions
 crossPaths in ThisBuild := false
 
-threed in ThisBuild := { System.setProperty("org.nlogo.is3d", "true") }
-
 nogen in ThisBuild  := { System.setProperty("org.nlogo.noGenerator", "true") }
 
 libraryDependencies in ThisBuild ++= Seq(
   "asm" % "asm-all" % "3.3.1",
-  "org.picocontainer" % "picocontainer" % "2.13.6",
   "org.jmock" % "jmock" % "2.5.1" % "test",
   "org.jmock" % "jmock-legacy" % "2.5.1" % "test",
   "org.jmock" % "jmock-junit4" % "2.5.1" % "test",
@@ -35,13 +32,9 @@ libraryDependencies in ThisBuild ++= Seq(
   "org.scalatest" %% "scalatest" % "2.0.M5b" % "test"
 )
 
-///
-/// top-level project only
-///
-
 name := "NetLogo"
 
-artifactName := { (_, _, _) => "NetLogo.jar" }
+artifactName := { (_, _, _) => "NetLogoHeadless.jar" }
 
 onLoadMessage := ""
 
@@ -55,67 +48,27 @@ javaSource in Compile <<= baseDirectory(_ / "src" / "main")
 
 javaSource in Test <<= baseDirectory(_ / "src" / "test")
 
-unmanagedSourceDirectories in Test <+= baseDirectory(_ / "src" / "tools")
-
 unmanagedResourceDirectories in Compile <+= baseDirectory { _ / "resources" }
 
-unmanagedResourceDirectories in Compile <+= baseDirectory { _ / "headless" / "resources" }
+sourceGenerators in Compile <+= JFlexRunner.task
 
-mainClass in Compile := Some("org.nlogo.app.App")
+resourceGenerators in Compile <+= I18n.resourceGeneratorTask
 
-sourceGenerators in Compile <+= EventsGenerator.task
+mainClass in Compile := Some("org.nlogo.headless.Main")
 
 Extensions.extensionsTask
 
-InfoTab.infoTabTask
-
-ModelIndex.modelIndexTask
-
-NativeLibs.nativeLibsTask
-
-moduleConfigurations += ModuleConfiguration("javax.media", JavaNet2Repository)
-
-libraryDependencies ++= Seq(
-  "log4j" % "log4j" % "1.2.17",
-  "javax.media" % "jmf" % "2.1.1e",
-  "org.pegdown" % "pegdown" % "1.1.0",
-  "org.parboiled" % "parboiled-java" % "1.0.2",
-  "steveroy" % "mrjadapter" % "1.2" from "http://ccl.northwestern.edu/devel/mrjadapter-1.2.jar",
-  "org.jhotdraw" % "jhotdraw" % "6.0b1" from "http://ccl.northwestern.edu/devel/jhotdraw-6.0b1.jar",
-  "ch.randelshofer" % "quaqua" % "7.3.4" from "http://ccl.northwestern.edu/devel/quaqua-7.3.4.jar",
-  "ch.randelshofer" % "swing-layout" % "7.3.4" from "http://ccl.northwestern.edu/devel/swing-layout-7.3.4.jar",
-  "org.jogl" % "jogl" % "1.1.1" from "http://ccl.northwestern.edu/devel/jogl-1.1.1.jar",
-  "org.gluegen-rt" % "gluegen-rt" % "1.1.1" from "http://ccl.northwestern.edu/devel/gluegen-rt-1.1.1.jar",
-  "org.apache.httpcomponents" % "httpclient" % "4.2",
-  "org.apache.httpcomponents" % "httpmime" % "4.2",
-  "com.googlecode.json-simple" % "json-simple" % "1.1.1"
-)
-
-all <<= (baseDirectory, streams) map { (base, s) =>
-  s.log.info("making resources/system/dict.txt and docs/dict folder")
-  IO.delete(base / "docs" / "dict")
-  Process("python bin/dictsplit.py").!!
-}
+all := { () }
 
 all <<= all.dependsOn(
   packageBin in Compile,
-  packageBin in Compile in NetLogoBuild.headless,
-  Extensions.extensions,
-  NativeLibs.nativeLibs,
-  ModelIndex.modelIndex,
-  InfoTab.infoTab,
-  Scaladoc.docSmaller)
-
-///
-/// settings from project/*.scala
-///
+  compile in Test,
+  Extensions.extensions)
 
 seq(Testing.settings: _*)
 
-seq(Packaging.settings: _*)
-
-seq(Running.settings: _*)
-
 seq(Depend.settings: _*)
 
-seq(Scaladoc.settings: _*)
+seq(Dump.settings: _*)
+
+seq(ChecksumsAndPreviews.settings: _*)

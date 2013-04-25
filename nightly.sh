@@ -28,10 +28,6 @@ echo "*** done: fast:test"
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: nogen fast:test"; exit 1; fi
 echo "*** done: nogen fast:test"
 
-./sbt threed fast:test 2>&1 | tee tmp/nightly/2-threed-fast-test.txt
-if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: threed fast:test"; exit 1; fi
-echo "*** done: threed fast:test"
-
 ./sbt extensions 2>&1 | tee tmp/nightly/extensions.txt
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: extensions"; exit 1; fi
 echo "*** done: extensions"
@@ -43,10 +39,6 @@ echo "*** done: slow:test"
 ./sbt nogen slow:test 2>&1 | tee tmp/nightly/4-nogen-slow-test.txt
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: nogen slow:test"; exit 1; fi
 echo "*** done: nogen slow:test"
-
-./sbt threed slow:test 2>&1 | tee tmp/nightly/5-threed-slow-test.txt
-if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: threed slow:test"; exit 1; fi
-echo "*** done: threed slow:test"
 
 ./sbt all 2>&1 | tee tmp/nightly/6-sbt-all.txt
 if [ ${PIPESTATUS[0]} -ne 0 ] ; then echo "*** FAILED: sbt all"; exit 1; fi
