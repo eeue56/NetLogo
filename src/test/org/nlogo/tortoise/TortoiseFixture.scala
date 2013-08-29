@@ -28,14 +28,14 @@ class TortoiseFixture extends AbstractFixture {
 
   val rhino = new Rhino
 
-  def dimensions = api.WorldDimensions.square(0)
+  def defaultDimensions = api.WorldDimensions.square(0)
 
   var program: api.Program = api.Program.empty
   var procs: ProceduresMap = NoProcedures
 
-  override def declare(source: String) {
+  override def declare(source: String, dimensions: api.WorldDimensions = defaultDimensions) {
     val (js, p, m) =
-      try Compiler.compileProcedures(source, 0, 0, 0, 0)
+      try Compiler.compileProcedures(source, dimensions)
       catch catcher
     program = p
     procs = m
