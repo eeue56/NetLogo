@@ -67,9 +67,8 @@ object Depend {
       "generate" -> List("prim"),
       "headless" -> List("mirror","workspace"),
       "headless/lang" -> List("headless"),
+      "headless/lang/misc" -> List("headless/lang"),
       "headless/misc" -> List("headless"),
-      "headless/mirror" -> List("headless"),
-      "headless/model" -> List("headless"),
       "headless/render" -> List("headless"),
       "job" -> List("nvm"),
       "lab" -> List("nvm"),
@@ -83,7 +82,8 @@ object Depend {
       "render" -> List("shape"),
       "review" -> List("mirror", "window"),
       "shape" -> List("api"),
-      "tortoise" -> List("headless", "compile", "prim/etc", "mirror"),
+      "tortoise" -> List("compile", "prim/etc", "mirror", "headless/lang"),
+      "tortoise/dock" -> List("tortoise"),
       "util" -> Nil,
       "workspace" -> List("nvm", "plot", "drawing"))
     case class Package(val dir: String, var depends: Set[Package]) {
