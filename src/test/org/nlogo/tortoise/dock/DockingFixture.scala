@@ -11,16 +11,9 @@ import
 
 trait DockingSuite extends org.scalatest.fixture.FunSuite {
   type FixtureParam = DockingFixture
-  override def withFixture(test: OneArgTest) =
-    DockingFixture.withFixture(test.name) { fixture =>
-      withFixture(test.toNoArgTest(fixture))
-    }
-}
-
-object DockingFixture {
-  def withFixture[T](name: String)(fn: DockingFixture => T) = {
-    val fixture = new DockingFixture(name)
-    try fn(fixture)
+  override def withFixture(test: OneArgTest) = {
+    val fixture = new DockingFixture(test.name)
+    try withFixture(test.toNoArgTest(fixture))
     finally fixture.workspace.dispose()
   }
 }
@@ -61,7 +54,7 @@ class DockingFixture(name: String) extends Fixture(name) {
     state = newState
     // println(s"state = $state")
     // println(s"update = $update")
-    val expectedJson = "[" + mirror.JSONSerializer.serialize(update) + "]"
+    val expectedJson = "[" + JSONSerializer.serialize(update) + "]"
     // println(s"expectedJson = $expectedJson")
     val expectedOutput = workspace.outputAreaBuffer.toString
     val (actualOutput, actualJson) =
