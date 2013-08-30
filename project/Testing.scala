@@ -14,8 +14,10 @@ object Testing {
   lazy val te            = inputKey[Unit]("org.nlogo.headless.lang.TestExtensions")
   lazy val tm            = inputKey[Unit]("org.nlogo.headless.lang.TestModels")
   lazy val testChecksums = inputKey[Unit]("org.nlogo.headless.misc.TestChecksums")
+  lazy val ttr           = inputKey[Unit]("org.nlogo.tortoise.TestReporters")
+  lazy val ttc           = inputKey[Unit]("org.nlogo.tortoise.TestCommands")
 
-  private val testKeys = Seq(tr, tc, te, tm, testChecksums)
+  private val testKeys = Seq(tr, tc, te, tm, testChecksums, ttr, ttc)
 
   lazy val settings =
     fastMediumSlowSettings ++
