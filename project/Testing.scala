@@ -44,7 +44,9 @@ object Testing {
   private def mediumFilter(path: Classpath, name: String): Boolean =
     fastFilter(path, name) ||
     name == "org.nlogo.headless.lang.TestReporters" ||
-    name == "org.nlogo.headless.lang.TestCommands"
+    name == "org.nlogo.headless.lang.TestCommands" ||
+    name == "org.nlogo.tortoise.TestReporters" ||
+    name == "org.nlogo.tortoise.TestCommands"
   private def slowFilter(path: Classpath, name: String): Boolean = {
     val jars = path.files.map(_.asURL).toArray[java.net.URL]
     val loader = new java.net.URLClassLoader(jars, getClass.getClassLoader)
