@@ -55,10 +55,23 @@ class TortoiseFixture extends AbstractFixture {
   }
 
   override def runCommand(command: Command, mode: TestMode) {
-    if (!command.result.isInstanceOf[Success])
-      cancel("unknown result type: " + command.result.getClass.getSimpleName)
-    try rhino.run(Compiler.compileCommands(command.command, procs, program))
-    catch catcher
+    def js = Compiler.compileCommands(command.command, procs, program)
+    command.result match {
+      case Success(_) =>
+        try rhino.run(js)
+        catch catcher
+      case CompileError(msg) =>
+        try {
+          try js catch catcher
+          fail("no CompilerException occurred")
+        }
+        catch {
+          case ex: api.CompilerException =>
+            assertResult(msg)(ex.getMessage)
+        }
+      case r =>
+        cancel("unknown result type: " + r.getClass.getSimpleName)
+    }
   }
 
   override def runReporter(reporter: Reporter, mode: TestMode) {
